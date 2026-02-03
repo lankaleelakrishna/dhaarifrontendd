@@ -1,8 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Film, Instagram, Twitter, Youtube, Facebook } from 'lucide-react';
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate('/contact');
+  };
+
   return (
     <footer className="bg-cinematic-black border-t border-cinematic-goldMuted/20 pt-16 pb-8">
       <div className="container mx-auto px-6">
@@ -30,7 +37,7 @@ const Footer: React.FC = () => {
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link to="/privacy-policy" className="hover:text-cinematic-textBody">Privacy Policy</Link>
             <Link to="/terms-and-conditions" className="hover:text-cinematic-textBody">Terms &amp; Conditions</Link>
-            <Link to="/contact" className="hover:text-cinematic-textBody">Contact</Link>
+            <button onClick={handleContactClick} className="hover:text-cinematic-textBody">Contact</button>
           </div>
         </div>
       </div>

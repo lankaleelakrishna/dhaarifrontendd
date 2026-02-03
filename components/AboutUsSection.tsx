@@ -1,31 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Target, Heart, Zap, Award } from 'lucide-react';
+import { Target, Heart } from 'lucide-react';
 
-const teamMembers = [
-  {
-    name: "Rajesh Khanna",
-    role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200",
-    bio: "Former casting director with 15 years in Bollywood."
-  },
-  {
-    name: "Priya Desai",
-    role: "Head of Operations",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200",
-    bio: "Managed production for 3 award-winning indie films."
-  },
-  {
-    name: "Arjun Rampal",
-    role: "Creative Director",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200",
-    bio: "Renowned cinematographer passionate about education."
-  }
-];
+
 
 const AboutUsSection: React.FC = () => {
   return (
-    <section id="about-us" className="py-24 relative overflow-hidden bg-cinematic-black">
+    <section id="about-us" className="py-16 relative overflow-hidden bg-cinematic-black">
       {/* Decorative large text background */}
       <div className="absolute top-20 right-0 text-[10rem] font-display font-bold text-white/[0.02] leading-none pointer-events-none select-none">
         VISION
@@ -34,7 +15,7 @@ const AboutUsSection: React.FC = () => {
       <div className="container mx-auto px-6 relative z-10">
         
         {/* Mission / Vision Split */}
-        <div className="flex flex-col lg:flex-row gap-16 mb-24 items-center">
+        <div className="flex flex-col lg:flex-row gap-16 mb-12 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -103,33 +84,7 @@ const AboutUsSection: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Team Section */}
-        <div className="border-t border-white/5 pt-16">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-display font-bold text-white mb-2">Meet the Visionaries</h3>
-            <p className="text-cinematic-textMuted">The people making it happen.</p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-cinematic-charcoal/50 border border-white/5 p-6 rounded-xl text-center group hover:border-cinematic-gold/30 transition-colors"
-              >
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-cinematic-gold/50 p-1">
-                  <img src={member.image} alt={member.name} className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                </div>
-                <h4 className="text-lg font-bold text-white">{member.name}</h4>
-                <p className="text-cinematic-gold text-sm uppercase tracking-wide mb-3">{member.role}</p>
-                <p className="text-sm text-cinematic-textMuted">{member.bio}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
 
       </div>
     </section>

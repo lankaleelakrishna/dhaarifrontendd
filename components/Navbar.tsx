@@ -21,7 +21,6 @@ const Navbar: React.FC<NavbarProps> = ({ onJoinClick }) => {
 
   const navLinks = [
     { name: 'About', href: '#about' },
-    { name: 'Team', href: '#about-us' },
     { name: 'Roles', href: '#roles' },
     { name: 'Workshops', href: '#workshops' },
     { name: 'Process', href: '#process' },

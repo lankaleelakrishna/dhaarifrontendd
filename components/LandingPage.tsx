@@ -7,7 +7,6 @@ import WorkshopsSection from './WorkshopsSection';
 import GallerySection from './GallerySection';
 import JoinCardsGrid from './JoinCardsGrid';
 import TimelineSteps from './TimelineSteps';
-import Testimonials from './Testimonials';
 import ContactSection from './ContactSection';
 import Footer from './Footer';
 import CinematicBackground from './CinematicBackground';
@@ -26,7 +25,10 @@ const LandingPage: React.FC = () => {
 
   const handleRoleSelect = (roleTitle: string) => {
     setSelectedRole(roleTitle);
-    setIsModalOpen(true);
+    const section = document.getElementById('join-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -61,11 +63,9 @@ const LandingPage: React.FC = () => {
           {/* About Dhaari (Platform Info) - Moved here as requested */}
           <AboutSection />
           
-          {/* Testimonials */}
-          <Testimonials />
           
           {/* Application Form */}
-          <ContactSection />
+          <ContactSection initialRole={selectedRole} />
         </main>
 
         <Footer />

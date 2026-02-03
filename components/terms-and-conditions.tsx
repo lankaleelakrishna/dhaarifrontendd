@@ -43,9 +43,15 @@ const TermsAndConditions: React.FC = () => {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Payments &amp; Services</h2>
+        <h2 className="text-xl font-semibold mb-2">Payments, Cancellations &amp; Refunds</h2>
         <p className="text-cinematic-textMuted">
           When payments are involved, we’ll be clear about fees, refunds, and delivery. We work with secure payment partners and follow applicable rules for transactions.
+        </p>
+        <p className="text-cinematic-textMuted mt-2">
+          Payment cancellations: If you need to cancel a paid service or booking, request cancellation within 24 hours of the transaction for a full refund provided the service has not yet started. Cancellations requested after 24 hours or after services have begun are evaluated on a case-by-case basis and may be subject to deductions for services already rendered and transaction fees. Time-limited workshops or events may have separate cancellation windows noted on the event page at time of purchase.
+        </p>
+        <p className="text-cinematic-textMuted mt-2">
+          Disputes or chargebacks: If you dispute a charge, our payments partners may investigate; we will cooperate fully. To request a refund or discuss a cancellation, please <Link to="/contact" className="underline hover:text-cinematic-gold">Contact</Link> us with your transaction details and we will respond promptly.
         </p>
       </section>
 

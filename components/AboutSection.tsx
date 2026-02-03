@@ -4,7 +4,7 @@ import { Film, Clapperboard, Sparkles } from 'lucide-react';
 
 const AboutSection: React.FC = () => {
   return (
-    <section id="about" className="py-24 relative overflow-hidden bg-cinematic-black">
+    <section id="about" className="py-16 relative overflow-hidden bg-cinematic-black">
       {/* Small Image on Right Side Top - Image 2 */}
       <div className="absolute top-0 right-0 w-80 h-80 z-5 pointer-events-none opacity-[20%]">
         <img 

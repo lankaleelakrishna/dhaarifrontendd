@@ -65,11 +65,17 @@ const JoinCardsGrid: React.FC<JoinCardsGridProps> = ({ onRoleSelect }) => {
                 <p className="text-sm text-cinematic-textMuted group-hover:text-cinematic-textBody transition-colors">{role.description}</p>
                 
                 <motion.div 
-                    className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-cinematic-gold uppercase tracking-widest border-b border-cinematic-gold pb-0.5"
+                    className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity"
                     initial={{ width: "0%" }}
                     whileHover={{ width: "auto" }}
                 >
-                    Apply Now
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); onRoleSelect && onRoleSelect(role.title); }}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cinematic-gold text-cinematic-black font-bold text-xs uppercase tracking-widest hover:opacity-90 transition"
+                    >
+                      Apply Now
+                    </button>
                 </motion.div>
               </div>
             </motion.div>

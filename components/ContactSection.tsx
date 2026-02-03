@@ -10,9 +10,14 @@ declare global {
   }
 }
 
-const ContactSection: React.FC = () => {
+interface ContactSectionProps {
+  initialRole?: string;
+}
+
+const ContactSection: React.FC<ContactSectionProps> = ({ initialRole }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
   
   // Simple form state
   const [formData, setFormData] = useState({
@@ -20,13 +25,31 @@ const ContactSection: React.FC = () => {
       lastName: '',
       phone: '',
       email: '',
-      address: ''
+      address: '',
+      role: initialRole || '',
+      roleOther: ''
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-      if (formErrors[e.target.name]) {
-          setFormErrors({ ...formErrors, [e.target.name]: '' });
+  // Sync initialRole when provided (e.g., when user clicks Apply Now)
+  React.useEffect(() => {
+    if (!initialRole) return;
+    const availableRoles = ['Actor','Director','Writer','Cinematographer','Musician','Editor','Designer','Dancer'];
+    if (availableRoles.includes(initialRole)) {
+      setFormData(f => ({ ...f, role: initialRole, roleOther: '' }));
+    } else {
+      setFormData(f => ({ ...f, role: 'Other', roleOther: initialRole }));
+    }
+    const section = document.getElementById('join-section');
+    if (section) {
+      setTimeout(() => section.scrollIntoView({ behavior: 'smooth' }), 80);
+    }
+  }, [initialRole]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+      setFormData({ ...formData, [name]: value });
+      if (formErrors[name]) {
+          setFormErrors({ ...formErrors, [name]: '' });
       }
   };
 
@@ -38,6 +61,8 @@ const ContactSection: React.FC = () => {
       else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) errors.phone = 'Invalid phone number';
       if (!formData.email.trim()) errors.email = 'Email is required';
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = 'Invalid email address';
+      if (!formData.role.trim()) errors.role = 'Please select a role';
+      if (formData.role === 'Other' && !formData.roleOther.trim()) errors.roleOther = 'Please specify your role';
       if (!formData.address.trim()) errors.address = 'Address is required';
       
       setFormErrors(errors);
@@ -54,19 +79,22 @@ const ContactSection: React.FC = () => {
   const submitDataToBackend = async () => {
     try {
         setIsSubmitted(false); // Don't set to true yet, let's see if it submits
+        setIsLoading(true);
         const payload = {
             firstname: formData.firstName,
             lastname: formData.lastName,
             contact_no: formData.phone,
             email: formData.email,
-            address: formData.address
+            address: formData.address,
+            role: formData.role === 'Other' ? formData.roleOther : formData.role
         };
 
         console.log('Submitting data:', payload);
 
-        // Change this URL to your backend URL
-        const backendUrl = 'http://localhost:5000/data'; // UPDATE THIS with your backend URL
-        
+        // Use Vite environment variable VITE_API_URL or fallback to localhost
+        const backendBase = (import.meta as any).env.VITE_API_URL || 'http://localhost:5000';
+        const backendUrl = `${backendBase.replace(/\/$/, '')}/data`;
+
         const response = await fetch(backendUrl, {
             method: 'POST',
             headers: {
@@ -75,31 +103,35 @@ const ContactSection: React.FC = () => {
             body: JSON.stringify(payload)
         });
 
-        console.log('Response status:', response.status);
         const result = await response.json();
+        console.log('Response status:', response.status);
         console.log('Response data:', result);
 
-        if (response.ok) {
-            // Success - show success message
+        if (response.status === 201) {
+            // New insert — success
             setIsSubmitted(true);
             setTimeout(() => {
                 setIsSubmitted(false);
                 setFormData({ firstName: '', lastName: '', phone: '', email: '', address: '' });
                 setFormErrors({});
             }, 3000);
+        } else if (response.status === 200) {
+            // Duplicate entry — show informational message but don't mark as submitted
+            setFormErrors({ submit: result.message || 'Data already submitted. Duplicate ignored.' });
         } else {
-            // Error
             console.error('Backend error:', result);
-            setFormErrors({ submit: result.error || 'Failed to submit data' });
+            setFormErrors({ submit: result.error || result.message || 'Failed to submit data' });
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error submitting data:', error);
-        setFormErrors({ submit: `Network error: ${error.message}` });
+        setFormErrors({ submit: `Network error: ${error?.message || String(error)}` });
+    } finally {
+        setIsLoading(false);
     }
   };
 
   return (
-    <section id="join-section" className="py-24 relative overflow-hidden flex items-center justify-center min-h-screen bg-transparent">
+    <section id="join-section" className="py-16 relative overflow-hidden flex items-center justify-center bg-transparent">
       {/* Dynamic Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-cinematic-black/10 via-cinematic-charcoal/40 to-cinematic-black pointer-events-none" />
       
@@ -294,6 +326,43 @@ const ContactSection: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
+                      <label className="text-xs font-bold text-cinematic-textMuted uppercase tracking-wider ml-1">Role</label>
+                      <div className="relative">
+                        <select
+                          name="role"
+                          value={formData.role}
+                          onChange={handleInputChange}
+                          className={`w-full bg-cinematic-black/60 border ${formErrors.role ? 'border-red-500/50' : 'border-white/10'} rounded-xl py-4 pl-4 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-cinematic-gold focus:ring-1 focus:ring-cinematic-gold transition-all`}
+                        >
+                          <option value="">Select your role</option>
+                          <option>Actor</option>
+                          <option>Director</option>
+                          <option>Writer</option>
+                          <option>Cinematographer</option>
+                          <option>Musician</option>
+                          <option>Editor</option>
+                          <option>Designer</option>
+                          <option>Dancer</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      {formData.role === 'Other' && (
+                        <div className="mt-2">
+                          <input
+                            name="roleOther"
+                            type="text"
+                            placeholder="Please specify your role"
+                            value={formData.roleOther}
+                            onChange={handleInputChange}
+                            className={`w-full bg-cinematic-black/60 border ${formErrors.roleOther ? 'border-red-500/50' : 'border-white/10'} rounded-xl py-3 px-4 text-white placeholder-white/20 focus:outline-none focus:border-cinematic-gold focus:ring-1 focus:ring-cinematic-gold transition-all`}
+                          />
+                        </div>
+                      )}
+                      {formErrors.role && <p className="text-red-500 text-xs ml-1">{formErrors.role}</p>}
+                      {formErrors.roleOther && <p className="text-red-500 text-xs ml-1">{formErrors.roleOther}</p>}
+                    </div>
+
+                    <div className="space-y-2">
                       <label className="text-xs font-bold text-cinematic-textMuted uppercase tracking-wider ml-1">Address</label>
                       <div className="relative group">
                         <input 
@@ -310,12 +379,18 @@ const ContactSection: React.FC = () => {
 
                     <div className="pt-4">
                       <Button 
-                        type="submit" 
+                        type="" 
                         variant="primary" 
                         size="lg" 
                         className="w-full py-5 text-lg shadow-[0_0_30px_rgba(198,40,40,0.4)] hover:shadow-[0_0_50px_rgba(198,40,40,0.6)]"
+                        disabled={isLoading}
                       >
-                        Submit
+                        {isLoading ? (
+                          <span className="inline-flex items-center gap-3 justify-center">
+                            <Loader2 className="animate-spin w-5 h-5" />
+                            Processing payment...
+                          </span>
+                        ) : 'Pay Now'}
                       </Button>
                     </div>
                   </form>
